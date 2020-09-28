@@ -38,6 +38,7 @@ const syncCollectionToAlgolia = async (
           numReports: document.numReports,
           score: document.score,
           categorized_incidents: document.categorized_incidents,
+          numEmployees: document.numEmployees
 				};
 				break;
       case "reports":
