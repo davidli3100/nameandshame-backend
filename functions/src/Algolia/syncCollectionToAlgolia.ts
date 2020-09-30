@@ -14,6 +14,12 @@ const algoliaClient = algoliasearch(
   functions.config().algolia.apikey
 );
 
+/**
+ * Syncs a given firebase collection to an algolia index
+ * @param collectionName name of the algolia index being synced to
+ * @param firebaseCollectionName name of the firebase collection being synced
+ * @returns {boolean} returns true/false depending on the success of the sync op,
+ */
 const syncCollectionToAlgolia = async (
   collectionName: string,
   firebaseCollectionName: string
