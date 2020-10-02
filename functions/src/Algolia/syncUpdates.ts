@@ -1,5 +1,9 @@
 import * as functions from "firebase-functions";
 import algoliasearch from "algoliasearch";
+import * as admin from "firebase-admin";
+
+// Set up Firestore.
+const db = admin.firestore();
 
 const env = functions.config();
 
@@ -55,7 +59,13 @@ export const syncEmployerUpdates = functions.firestore
     const objectID = newData.id;
 
     if (!oldData.exists && newData.exists) {
-      // creating
+      // creating report
+
+      // first increment the report's employer's numReports field
+      db.collection('employers').doc(data?.employerRef).update({
+        numReports: admin.firestore.FieldValue.increment(1)
+      })
+
       return reportsIndex.saveObject(
         Object.assign(
           {},
@@ -66,7 +76,13 @@ export const syncEmployerUpdates = functions.firestore
         )
       );
     } else if (!newData.exists && oldData.exists) {
-      // deleting
+      // deleting report
+
+      // first decrement the report's employer's numReports field
+      db.collection('employers').doc(data?.employerRef).update({
+        numReports: admin.firestore.FieldValue.increment(-1)
+      })
+
       return reportsIndex.deleteObject(objectID);
     } else {
       // updating
