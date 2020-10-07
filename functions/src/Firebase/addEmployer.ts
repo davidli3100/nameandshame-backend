@@ -7,10 +7,10 @@ admin.initializeApp();
 export const addEmployer = functions.https.onCall((data, context) => {
 
 
-    const numEmployees = data.numEmployees;
-    const bgURL = data.backgroundImageURL;
-    const imgURL = data.imageURL;
-    const name = data.name;
+    var numEmployees = data.numEmployees;
+    var bgURL = data.backgroundImageURL;
+    var imgURL = data.imageURL;
+    var name = data.name;
 
     return admin.database().ref("/employers").push({
         backgroundImageURL:     bgURL,
@@ -27,4 +27,8 @@ export const addEmployer = functions.https.onCall((data, context) => {
         console.log("pushed new employer to database")
     })
 });
+
+
+
+
 
