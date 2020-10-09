@@ -17,12 +17,14 @@ export const addReport = functions.https.onCall((data, context) => {
 
 
     return admin.database().ref("/reports").push({
-            c
-
-
-
-        
+            categories: categories,
+            date: date,
+            description: description,
+            employer: employer,
+            employerRef: employerRef,
+            title: title,
     }).then(() => {
+        //TODO update categories and numreports in employers
         console.log("pushed new employer to database")
     })
 
