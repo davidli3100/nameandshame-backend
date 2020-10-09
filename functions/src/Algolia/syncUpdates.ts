@@ -72,7 +72,10 @@ export const syncEmployerUpdates = functions.firestore
           {
             objectID,
           },
-          data
+          data,
+          {
+            dateMillis: data?.date._seconds * 1000,
+          }
         )
       );
     } else if (!newData.exists && oldData.exists) {
@@ -92,7 +95,10 @@ export const syncEmployerUpdates = functions.firestore
           {
             objectID,
           },
-          data
+          data,
+          {
+            dateMillis: data?.date._seconds * 1000
+          }
         )
       );
     }

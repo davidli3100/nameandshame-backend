@@ -57,6 +57,7 @@ const syncCollectionToAlgolia = async (
           employer: document.employer,
           title: document.title,
           categories: document.categories,
+          employerRef: document.employerRef,
 				};
 				break;
 			default:
