@@ -74,7 +74,7 @@ export const syncEmployerUpdates = functions.firestore
           },
           data,
           {
-            dateMillis: data?.date._seconds * 1000,
+            dateMillis: data?.date?._seconds * 1000,
           }
         )
       );
@@ -97,7 +97,7 @@ export const syncEmployerUpdates = functions.firestore
           },
           data,
           {
-            dateMillis: data?.date._seconds * 1000
+            dateMillis: data?.date?._seconds * 1000
           }
         )
       );
