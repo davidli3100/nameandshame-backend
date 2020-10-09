@@ -15,4 +15,3 @@ export const sendDatabaseToAlgolia = functions.https.onRequest(
 		res.status(200).send("Database was indexed to Algolia successfully.");
   }
 );
-
