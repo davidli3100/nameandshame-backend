@@ -5,6 +5,7 @@ import * as admin from "firebase-admin";
 const cors = require("cors")({ origin: true });
 
 export const addReport = functions.https.onRequest(async (req, res) => {
+  // set pre-fetch response headers for CORS purposes
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
@@ -12,13 +13,22 @@ export const addReport = functions.https.onRequest(async (req, res) => {
     "Access-Control-Allow-Headers",
     "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
   );
+
+  // wrap the entire function with the cors helper
   return cors(req, res, async () => {
-    console.log(req.body.categories);
+    // set data
     const categories = req.body.categories;
-    const date = admin.firestore.Timestamp.fromMillis(req.body.date);
+    const date = admin.firestore.Timestamp.fromMillis(req.body.date); // using the firebase library to convert date formats
     const description = req.body.description;
     const employerRef = req.body.employerRef;
     const title = req.body.title;
+
+    /**
+     * Using batching and transactions to safely commit to multiple documents
+     */
+    const batch = admin.firestore().batch();
+    const employersRef = admin.firestore().collection("employers");
+    const reportsRef = admin.firestore().collection("reports");
 
     // grab the employer from firestore
     const employerData = await (
@@ -36,56 +46,38 @@ export const addReport = functions.https.onRequest(async (req, res) => {
     // check to see if the employer record needs to have any new categories added to it from this report
     categories.every(async (category: string) => {
       if (!employerData?.categories?.includes(category)) {
-        // this category was not found
-        await admin
-          .firestore()
-          .collection("employers")
-          .doc(employerRef)
-          .update({
-            categories: admin.firestore.FieldValue.arrayUnion(category),
-          })
-          .catch((err) => {
-            res.status(500).send(err);
-            throw new Error(err);
-          });
+        // this category was not found, add it to the employer doc
+        batch.update(employersRef.doc(employerRef), {
+          categories: admin.firestore.FieldValue.arrayUnion(category),
+        });
       }
     });
 
     // increment the employerRef's numReports field
-    await admin
-      .firestore()
-      .collection("employers")
-      .doc(employerRef)
-      .update({
-        numReports: admin.firestore.FieldValue.increment(1),
-      })
-      .catch((err) => {
-        res.status(500).send(err);
-        throw new Error(err);
-      });
+    batch.update(employersRef.doc(employerRef), {
+      numReports: admin.firestore.FieldValue.increment(1),
+    });
 
-    admin
-      .firestore()
-      .collection("reports")
-      .add({
-        categories: categories,
-        date: date,
-        description: description,
-        employer: {
-          name: employerData?.name,
-          numEmployees: employerData?.numEmployees,
-        },
-        employerRef: employerRef,
-        title: title,
-      })
-      .then((id) => {
-        console.log(`New report with id ${id} added`);
-        res.status(200).send(id.id);
-        return id;
-      })
-      .catch((err) => {
-        res.status(500).send(err);
-        throw new Error(err);
-      });
+    // finally, add the report into firestore
+    batch.create(reportsRef.doc(), {
+      categories: categories,
+      date: date,
+      description: description,
+      employer: {
+        name: employerData?.name,
+        numEmployees: employerData?.numEmployees,
+      },
+      employerRef: employerRef,
+      title: title,
+    });
+
+    // commit the batched writes and updates
+    await batch.commit().catch((err) => {
+      console.log(err);
+      res.status(500).send(err);
+      throw new Error(err);
+    });
+
+    res.status(200).send(true);
   });
 });
