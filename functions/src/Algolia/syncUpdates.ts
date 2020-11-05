@@ -60,12 +60,6 @@ export const syncEmployerUpdates = functions.firestore
 
     if (!oldData.exists && newData.exists) {
       // creating report
-
-      // first increment the report's employer's numReports field
-      db.collection('employers').doc(data?.employerRef).update({
-        numReports: admin.firestore.FieldValue.increment(1)
-      })
-
       return reportsIndex.saveObject(
         Object.assign(
           {},

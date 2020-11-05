@@ -44,8 +44,10 @@ export const addReport = functions.https.onRequest(async (req, res) => {
     ).data();
 
     // check to see if the employer record needs to have any new categories added to it from this report
+    const employerCategories = employerData?.categories?.map((category:string) => category.toLowerCase())
+
     categories.every(async (category: string) => {
-      if (!employerData?.categories?.includes(category)) {
+      if (!employerCategories.includes(category.toLowerCase())) {
         // this category was not found, add it to the employer doc
         batch.update(employersRef.doc(employerRef), {
           categories: admin.firestore.FieldValue.arrayUnion(category),
