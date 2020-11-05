@@ -23,7 +23,7 @@ export const addEmployer = functions.https.onRequest(async (req, res) => {
     const numReports:number = 0;
     const score:number = 0;
     const categories:Array<string> = [];
-    let numEmployees:number = req.body.numEmployees;
+    let numEmployees:number = parseInt(req.body.numEmployees);
 
     // manual override for employees
     if (numEmployees > 10000) numEmployees = 10000;
