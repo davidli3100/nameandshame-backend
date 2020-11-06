@@ -1,17 +1,42 @@
-let wordslist: Set<String> = new Set<String>()
+import * as request from "request-promise-native";
+let wordslist: Set<string> = new Set<string>()
 
 
-function addWord(s: String): void {
+
+
+function sourceWordsList(){
+    let url = 'https://raw.githubusercontent.com/RobertJGabriel/Google-profanity-words/master/list.txt';
+    (async () => {
+        
+        var options = {
+            uri: url
+        };
+      
+        const result = await request.get(options);
+        var tokens = result.split("\n");
+        for(var i  = 0; i < tokens.length; i++){
+            wordslist.add(tokens[i].trim().toLowerCase());
+        }
+
+      })()
+
+     
+
+
+}
+
+
+function addWord(s: string): void {
     wordslist.add(s.toLowerCase());
 }
 
 
-function isLetter(s: String): boolean {
+function isLetter(s: string): boolean {
     return (s.length === 1 && (s.toLowerCase() != s.toUpperCase()));
 }
 
-function isProfane(s:String): boolean{
-    var s1 : String =  "";
+function isProfane(s:string): boolean{
+    var s1 : string =  "";
     for(var i  = 0; i < s.length; i++){
         //console.log(s.charAt(i))
         if(isLetter(s.charAt(i)) || s.charAt(i) === ' '){
@@ -19,7 +44,7 @@ function isProfane(s:String): boolean{
         }
     }
     console.log(s1);
-    var tokens: Array<String> = s1.split(" ");
+    var tokens: Array<string> = s1.split(" ");
 
     for(var i = 0; i < tokens.length; i++){
         if(wordslist.has(tokens[i].toLowerCase())){
@@ -38,3 +63,5 @@ function testFilter(): void{
     console.log(isProfane("a big uw-u"))
     console.log(isProfane(""))
 }
+
+sourceWordsList()
