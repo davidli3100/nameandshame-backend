@@ -28,7 +28,7 @@ export const addReport = functions.https.onRequest(async (req, res) => {
     /**
      * Moderation
      */
-    if(isProfane(title) || isProfane(description)){
+    if(await isProfane(title) || await isProfane(description)){
       console.error("profanity detected :(")
       res.status(500).send("isProfane");
       throw new Error("profanity")
