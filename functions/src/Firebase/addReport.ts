@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import notifySubscribers from "./notifySubscribers";
 const cors = require("cors")({ origin: true });
 
 export const addReport = functions.https.onRequest(async (req, res) => {
@@ -79,6 +80,21 @@ export const addReport = functions.https.onRequest(async (req, res) => {
       res.status(500).send(err);
       throw new Error(err);
     });
+
+    // now we send the emails to notify people
+    await notifySubscribers(employerRef, {
+      categories: categories,
+      date: date,
+      description: description,
+      employer: {
+        name: employerData?.name,
+        numEmployees: employerData?.numEmployees,
+      },
+      employerRef: employerRef,
+      title: title,
+    }).catch(err => {
+      console.error("Error in notifying subscribers: ", err);
+    })
 
     res.status(200).send(true);
   });

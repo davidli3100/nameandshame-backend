@@ -14,12 +14,15 @@ const notifySubscriber = async (
   report: Record<string, unknown>,
   employerID: string
 ) => {
+  console.log(email)
   const emailData = {
     from: `noreply@${functions.config().mailgun.domain}`,
     to: email,
     subject: `A new report submitted to ${employer}`,
     template: "report-alert",
-    'h:X-Mailgun-Variables': {employer: employer, title: report.title, employerID: employerID}
+    "v:employer": employer,
+    "v:title": report.title,
+    "v:employerID": employerID,
   };
 
   await mg.messages().send(emailData, (err: any, body: any) => {
@@ -27,9 +30,9 @@ const notifySubscriber = async (
     if (err) {
       throw new Error(err);
     }
-  })
+  });
 
-  return true
+  return true;
 };
 
 const notifySubscribers = async (
@@ -39,13 +42,18 @@ const notifySubscribers = async (
   const employerData = (
     await admin.firestore().collection("employers").doc(employer).get()
   ).data();
-  const subscribers = employerData?.subscribers;
+  const subscribers = employerData?.subscribers || [];
+
+  console.log(subscribers)
 
   await Promise.all(
     subscribers.map((subscriber: string) =>
       notifySubscriber(subscriber, employerData?.name, report, employer)
     )
-  );
+  ).catch((err) => {
+    console.log(err);
+    throw new Error(err);
+  });
 
   return true;
 };
