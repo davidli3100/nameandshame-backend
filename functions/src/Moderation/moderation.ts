@@ -24,7 +24,7 @@ function isLetter(s: string): boolean {
   return s.length === 1 && s.toLowerCase() != s.toUpperCase();
 }
 
-async function isProfane(s: string): boolean {
+async function isProfane(s: string): Promise<boolean> {
   if (!sourced) {
    await sourceWordsList();
   }

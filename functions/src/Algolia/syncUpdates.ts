@@ -35,7 +35,7 @@ export const syncEmployerUpdates = functions.firestore
       );
     } else if (!newData.exists && oldData.exists) {
       // if the firestore record isnt there anymore, delete from algolia
-      return employersIndex.deleteObject(objectID);
+      return employersIndex.deleteObject(oldData.id);
     } else {
       // else, the is probably an update to the record, update the algolia record
       return employersIndex.saveObject(
@@ -76,7 +76,7 @@ export const syncEmployerUpdates = functions.firestore
       // deleting report
 
       // first decrement the report's employer's numReports field
-      db.collection('employers').doc(data?.employerRef).update({
+      db.collection('employers').doc(oldData?.data()?.employerRef).update({
         numReports: admin.firestore.FieldValue.increment(-1)
       })
 
