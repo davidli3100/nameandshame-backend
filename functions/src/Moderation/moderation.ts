@@ -69,3 +69,4 @@ function testFilter(): void{
     console.log(isProfane(""))
 }
 
+export default isProfane
