@@ -1,4 +1,6 @@
 import * as request from "request-promise-native";
+
+let sourced: boolean = false;
 let wordslist: Set<string> = new Set<string>()
 
 
@@ -36,6 +38,9 @@ function isLetter(s: string): boolean {
 }
 
 function isProfane(s:string): boolean{
+    if(!sourced){
+        sourceWordsList();
+    }
     var s1 : string =  "";
     for(var i  = 0; i < s.length; i++){
         //console.log(s.charAt(i))
@@ -64,4 +69,3 @@ function testFilter(): void{
     console.log(isProfane(""))
 }
 
-sourceWordsList()
