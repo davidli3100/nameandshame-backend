@@ -24,11 +24,13 @@ export const addReport = functions.https.onRequest(async (req, res) => {
     const description = req.body.description;
     const employerRef = req.body.employerRef;
     const title = req.body.title;
-    /*
-    * moderation
-    */
+
+    /**
+     * Moderation
+     */
     if(isProfane(title) || isProfane(description)){
-      res.status(500).send("is profane");
+      console.error("profanity detected :(")
+      res.status(500).send("isProfane");
     }
     
     /**
