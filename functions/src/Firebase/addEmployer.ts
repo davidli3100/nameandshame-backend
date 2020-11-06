@@ -23,6 +23,7 @@ export const addEmployer = functions.https.onRequest(async (req, res) => {
     const numReports:number = 0;
     const score:number = 0;
     const categories:Array<string> = [];
+    const subscribers:Array<string> = [];
     let numEmployees:number = parseInt(req.body.numEmployees);
 
     // manual override for employees
@@ -40,6 +41,7 @@ export const addEmployer = functions.https.onRequest(async (req, res) => {
       numReports,
       score,
       categories,
+      subscribers,
     }).catch(err => {
       console.log(err);
       res.status(500).send(err);
