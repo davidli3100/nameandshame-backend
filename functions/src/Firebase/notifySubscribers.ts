@@ -18,11 +18,8 @@ const notifySubscriber = async (
     from: `noreply@${functions.config().mailgun.domain}`,
     to: email,
     subject: `A new report submitted to ${employer}`,
-    text: `
-      A new report with the title ${report.title} was submitted to NameandShame just now!
-
-      Please go to <a href="https://name-and-shame.netlify.app/employer/${employerID}">https://name-and-shame.netlify.app/employer/${employerID}</a> to view the report.
-    `,
+    template: "report-alert",
+    'h:X-Mailgun-Variables': {employer: employer, title: report.title, employerID: employerID}
   };
 
   await mg.messages().send(emailData, (err: any, body: any) => {

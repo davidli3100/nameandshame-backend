@@ -14,6 +14,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@types/mailgun-js": "^0.22.11",
     "algoliasearch": "^4.5.1",
     "cors": "^2.8.5",
     "firebase-admin": "^8.10.0",
