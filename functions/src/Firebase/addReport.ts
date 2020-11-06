@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+
 admin.initializeApp();
 
 export const addReport = functions.https.onCall(async (data, context) => {
@@ -13,7 +14,7 @@ export const addReport = functions.https.onCall(async (data, context) => {
   const employerData = await (
     await admin.firestore().collection("employers").doc(employerRef).get()
   ).data();
-
+  
   // check to see if the employer record needs to have any new categories added to it from this report
   categories.every(async (category: string) => {
     if (!employerData?.categories.includes(category)) {
@@ -42,6 +43,10 @@ export const addReport = functions.https.onCall(async (data, context) => {
     .catch((err) => {
       throw new Error(err);
     });
+  
+
+
+
 
   admin
     .firestore()
