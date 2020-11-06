@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import isProfane from "../Moderation/moderation";
 const cors = require("cors")({ origin: true });
 
 export const addReport = functions.https.onRequest(async (req, res) => {
@@ -22,7 +23,13 @@ export const addReport = functions.https.onRequest(async (req, res) => {
     const description = req.body.description;
     const employerRef = req.body.employerRef;
     const title = req.body.title;
-
+    /*
+    * moderation
+    */
+    if(isProfane(title) || isProfane(description)){
+      res.status(500).send("is profane");
+    }
+    
     /**
      * Using batching and transactions to safely commit to multiple documents
      */
